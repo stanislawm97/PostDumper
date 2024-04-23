@@ -14,15 +14,8 @@ fun createDirectory(storage: Storage, name: String) {
     storage.createDirectory(name)
 }
 
-fun saveDataToFile(storage: Storage, json: Json, vararg posts: Post) {
-    if (posts.size > 1) {
-        saveDataToFile(storage, json, *posts.dropLast(1).toTypedArray())
-    }
-
-    val post = posts.last()
-    val data = preparePostData(json, post)
-
-    storage.save(data, "${Defaults.DIRECTORY_NAME}/${post.id}.json")
+fun saveDataToFile(storage: Storage, data: String, pathname: String): Result<Unit> {
+    return storage.save(data, pathname)
 }
 
 suspend fun fetchPosts(client: Remote): Result<List<Post>> {
@@ -44,9 +37,8 @@ suspend fun main() = coroutineScope {
 
     createDirectory(storage, Defaults.DIRECTORY_NAME)
 
-    saveDataToFile(storage, json, *posts.toTypedArray())
-}
-
-object Defaults {
-    const val DIRECTORY_NAME = "posts"
+    posts.forEach { post ->
+        val preparedData = preparePostData(json, post)
+        saveDataToFile(storage, preparedData, "${Defaults.DIRECTORY_NAME}/${post.id}.json")
+    }
 }
