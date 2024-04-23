@@ -1,4 +1,4 @@
-package pl.mothdigital.postdumper
+package pl.mothdigital.postdumper.model
 
 import kotlinx.serialization.Serializable
 

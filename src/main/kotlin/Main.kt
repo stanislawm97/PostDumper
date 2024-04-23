@@ -5,13 +5,15 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import pl.mothdigital.postdumper.common.Defaults
+import pl.mothdigital.postdumper.model.Post
 
 fun preparePostData(json: Json, post: Post): String {
     return json.encodeToString(post)
 }
 
-fun createDirectory(storage: Storage, name: String) {
-    storage.createDirectory(name)
+fun createDirectory(storage: Storage, name: String): Result<Unit> {
+    return storage.createDirectory(name)
 }
 
 fun saveDataToFile(storage: Storage, data: String, pathname: String): Result<Unit> {

@@ -7,6 +7,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import pl.mothdigital.postdumper.model.Post
 
 interface Remote {
     suspend fun getPosts(): List<Post>

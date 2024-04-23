@@ -1,7 +1,7 @@
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import pl.mothdigital.postdumper.Post
+import pl.mothdigital.postdumper.model.Post
 import pl.mothdigital.postdumper.preparePostData
 
 class PreparePostDataTest {

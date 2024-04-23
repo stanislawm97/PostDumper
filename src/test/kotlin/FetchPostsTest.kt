@@ -1,7 +1,7 @@
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import pl.mothdigital.postdumper.Post
+import pl.mothdigital.postdumper.model.Post
 import pl.mothdigital.postdumper.Remote
 import pl.mothdigital.postdumper.fetchPosts
 import kotlin.test.Test
