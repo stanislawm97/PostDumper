@@ -1,16 +1,52 @@
 package pl.mothdigital.postdumper
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-fun main() {
-    val name = "Kotlin"
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    println("Hello, " + name + "!")
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
-    for (i in 1..5) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        println("i = $i")
+fun preparePostData(json: Json, post: Post): String {
+    return json.encodeToString(post)
+}
+
+fun createDirectory(storage: Storage, name: String) {
+    storage.createDirectory(name)
+}
+
+fun saveDataToFile(storage: Storage, json: Json, vararg posts: Post) {
+    if (posts.size > 1) {
+        saveDataToFile(storage, json, *posts.dropLast(1).toTypedArray())
     }
+
+    val post = posts.last()
+    val data = preparePostData(json, post)
+
+    storage.save(data, "${Defaults.DIRECTORY_NAME}/${post.id}.json")
+}
+
+suspend fun fetchPosts(client: Remote): Result<List<Post>> {
+    return runCatching {
+        client.getPosts()
+    }
+}
+
+suspend fun main() = coroutineScope {
+    val remote: Remote = RemoteImpl()
+    val storage: Storage = StorageImpl()
+    val json = Json { prettyPrint = true }
+
+    val posts: List<Post> = async(Dispatchers.IO) {
+        fetchPosts(remote)
+            .onFailure { it.printStackTrace() }
+            .getOrDefault(emptyList())
+    }.await()
+
+    createDirectory(storage, Defaults.DIRECTORY_NAME)
+
+    saveDataToFile(storage, json, *posts.toTypedArray())
+}
+
+object Defaults {
+    const val DIRECTORY_NAME = "posts"
 }

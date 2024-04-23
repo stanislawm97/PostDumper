@@ -8,11 +8,11 @@ import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
-interface Api {
+interface Remote {
     suspend fun getPosts(): List<Post>
 }
 
-class ApiImpl : Api {
+class RemoteImpl : Remote {
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) { json(Json) }
     }
